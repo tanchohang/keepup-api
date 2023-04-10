@@ -1,26 +1,56 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCircleDto } from './dto/create-circle.dto';
 import { UpdateCircleDto } from './dto/update-circle.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Circle } from './entities/circle.entity';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class CirclesService {
-  create(createCircleDto: CreateCircleDto) {
-    return 'This action adds a new circle';
+  constructor(@InjectModel(Circle.name) private circleModel: Model<Circle>) {}
+
+  async create(createCircleDto: CreateCircleDto): Promise<Circle> {
+    try {
+      return await this.circleModel.create(createCircleDto);
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new Error('Email is already in use');
+      }
+      throw error;
+    }
   }
 
-  findAll() {
-    return `This action returns all circles`;
+  async findAll(): Promise<Circle[]> {
+    try {
+      return await this.circleModel.find().select('-password');
+    } catch (error) {
+      throw error;
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} circle`;
+  async findOne(id: string): Promise<Circle> {
+    try {
+      return await this.circleModel.findById(id).select('-password');
+    } catch (error) {
+      throw error;
+    }
   }
 
-  update(id: number, updateCircleDto: UpdateCircleDto) {
-    return `This action updates a #${id} circle`;
+  async update(id: number, updateCircleDto: UpdateCircleDto): Promise<Circle> {
+    try {
+      return await this.circleModel
+        .findByIdAndUpdate(id, updateCircleDto)
+        .select('-password');
+    } catch (error) {
+      throw error;
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} circle`;
+  async remove(id: string): Promise<Circle> {
+    try {
+      return await this.circleModel.findByIdAndDelete(id).select('-password');
+    } catch (error) {
+      throw error;
+    }
   }
 }

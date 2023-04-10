@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { CirclesService } from './circles.service';
 import { CreateCircleDto } from './dto/create-circle.dto';
 import { UpdateCircleDto } from './dto/update-circle.dto';
@@ -19,7 +27,7 @@ export class CirclesController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.circlesService.findOne(+id);
+    return this.circlesService.findOne(id);
   }
 
   @Patch(':id')
@@ -29,6 +37,6 @@ export class CirclesController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.circlesService.remove(+id);
+    return this.circlesService.remove(id);
   }
 }
