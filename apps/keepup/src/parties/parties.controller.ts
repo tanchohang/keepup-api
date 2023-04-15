@@ -27,7 +27,7 @@ export class PartiesController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.partiesService.findOne(+id);
+    return this.partiesService.findOne(id);
   }
 
   @Patch(':id')
@@ -37,6 +37,6 @@ export class PartiesController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.partiesService.remove(+id);
+    return this.partiesService.remove(id);
   }
 }

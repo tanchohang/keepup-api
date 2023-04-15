@@ -13,9 +13,6 @@ export class CirclesService {
     try {
       return await this.circleModel.create(createCircleDto);
     } catch (error) {
-      if (error.code === 11000) {
-        throw new Error('Email is already in use');
-      }
       throw error;
     }
   }

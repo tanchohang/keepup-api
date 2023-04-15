@@ -1,26 +1,53 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePartyDto } from './dto/create-party.dto';
 import { UpdatePartyDto } from './dto/update-party.dto';
+import { Party } from './entities/party.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class PartiesService {
-  create(createPartyDto: CreatePartyDto) {
-    return 'This action adds a new party';
+  constructor(@InjectModel(Party.name) private partyModel: Model<Party>) {}
+
+  async create(createPartyDto: CreatePartyDto): Promise<Party> {
+    try {
+      return await this.partyModel.create(createPartyDto);
+    } catch (error) {
+      throw error;
+    }
   }
 
-  findAll() {
-    return `This action returns all parties`;
+  async findAll(): Promise<Party[]> {
+    try {
+      return await this.partyModel.find().select('-password');
+    } catch (error) {
+      throw error;
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} party`;
+  async findOne(id: string): Promise<Party> {
+    try {
+      return await this.partyModel.findById(id).select('-password');
+    } catch (error) {
+      throw error;
+    }
   }
 
-  update(id: number, updatePartyDto: UpdatePartyDto) {
-    return `This action updates a #${id} party`;
+  async update(id: number, updatePartyDto: UpdatePartyDto): Promise<Party> {
+    try {
+      return await this.partyModel
+        .findByIdAndUpdate(id, updatePartyDto)
+        .select('-password');
+    } catch (error) {
+      throw error;
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} party`;
+  async remove(id: string): Promise<Party> {
+    try {
+      return await this.partyModel.findByIdAndDelete(id).select('-password');
+    } catch (error) {
+      throw error;
+    }
   }
 }
