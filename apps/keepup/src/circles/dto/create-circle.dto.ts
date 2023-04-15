@@ -4,5 +4,5 @@ export class CreateCircleDto {
   @IsNotEmpty()
   name: string;
   @IsNotEmpty()
-  users: string[];
+  users?: string[];
 }

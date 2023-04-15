@@ -7,6 +7,7 @@ export class AuthService {
     private userService: UsersService,
     private jwtService: JwtService,
   ) {}
+
   async login(user: any) {
     const payload = { username: user.username, sub: user.id };
     return {

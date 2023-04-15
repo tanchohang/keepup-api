@@ -10,5 +10,6 @@ import { Circle, CircleSchema } from './entities/circle.entity';
   ],
   controllers: [CirclesController],
   providers: [CirclesService],
+  exports: [CirclesService],
 })
 export class CirclesModule {}

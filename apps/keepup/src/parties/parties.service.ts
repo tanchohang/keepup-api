@@ -4,13 +4,24 @@ import { UpdatePartyDto } from './dto/update-party.dto';
 import { Party } from './entities/party.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { CirclesService } from '../circles/circles.service';
 
 @Injectable()
 export class PartiesService {
-  constructor(@InjectModel(Party.name) private partyModel: Model<Party>) {}
+  constructor(
+    private circlesService: CirclesService,
+
+    @InjectModel(Party.name) private partyModel: Model<Party>,
+  ) {}
 
   async create(createPartyDto: CreatePartyDto): Promise<Party> {
+    /**
+     * Creating a new party automaticcally creates a Circle for the user
+     */
     try {
+      // const circle = await this.circlesService.create({
+      //   name: 'default',
+      // });
       return await this.partyModel.create(createPartyDto);
     } catch (error) {
       throw error;
