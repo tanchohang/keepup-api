@@ -7,6 +7,8 @@ import { PartiesModule } from './parties/parties.module';
 import { CirclesModule } from './circles/circles.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from 'apps/auth/src/guards/jwt.guard';
 
 @Module({
   imports: [
@@ -23,6 +25,6 @@ import { MongooseModule } from '@nestjs/mongoose';
     ),
   ],
   controllers: [],
-  providers: [],
+  providers: [{ provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
 export class AppModule {}

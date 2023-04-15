@@ -14,10 +14,6 @@ export class AuthService {
     };
   }
 
-  async logout() {
-    return 'Hello World!';
-  }
-
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.userService.findByUsername(username);
 

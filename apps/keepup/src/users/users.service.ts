@@ -61,19 +61,5 @@ export class UsersService {
     }
   }
 
-  // async validateUsernamePassword(
-  //   username: string,
-  //   password: string,
-  // ): Promise<User> {
-  //   return await this.userModel.findOne({ username }.th
-  //     if (user.comparePassword(password, user.password)) return user as User;
-  //   });
-  // }
-  // async validateEmailPassword(email: string, password: string): Promise<User> {
-  //   return await this.userModel.findOne({ email }, (error, user) => {
-  //     if (error) throw error;
-  //     return user.comparePassword(password, user.password);
-  //   });
-  // }
-  // //END OF CRUD operations
+  //END OF CRUD operations
 }
