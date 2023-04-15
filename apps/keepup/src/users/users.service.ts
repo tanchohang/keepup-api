@@ -27,10 +27,17 @@ export class UsersService {
       throw error;
     }
   }
-
   async findOne(id: string): Promise<User> {
     try {
-      return await this.userModel.findById(id).select('-password');
+      return await this.userModel.findById(id);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findByUsername(username: string): Promise<User> {
+    try {
+      return await this.userModel.findOne({ username });
     } catch (error) {
       throw error;
     }
@@ -53,5 +60,20 @@ export class UsersService {
       throw error;
     }
   }
-  //END OF CRUD operations
+
+  // async validateUsernamePassword(
+  //   username: string,
+  //   password: string,
+  // ): Promise<User> {
+  //   return await this.userModel.findOne({ username }.th
+  //     if (user.comparePassword(password, user.password)) return user as User;
+  //   });
+  // }
+  // async validateEmailPassword(email: string, password: string): Promise<User> {
+  //   return await this.userModel.findOne({ email }, (error, user) => {
+  //     if (error) throw error;
+  //     return user.comparePassword(password, user.password);
+  //   });
+  // }
+  // //END OF CRUD operations
 }

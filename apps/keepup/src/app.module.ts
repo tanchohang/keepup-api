@@ -10,15 +10,16 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     UsersModule,
     AuthModule,
     ChatModule,
     ActivitiesModule,
     CirclesModule,
     PartiesModule,
-    ConfigModule.forRoot(),
     MongooseModule.forRoot(
-      'mongodb://root:example@localhost:27017/keepup?authSource=admin',
+      process.env.MONGO_URI,
+      // 'mongodb://root:example@localhost:27017/keepup?authSource=admin',
     ),
   ],
   controllers: [],
