@@ -10,11 +10,12 @@ import {
 import { CreateUserDto } from './dto/CreateUser.dto';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/updateUser.dto';
+import { Public } from 'apps/auth/src/decorators/jwt.decorator';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
-
+  @Public()
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     const user = await this.userService.create(createUserDto);

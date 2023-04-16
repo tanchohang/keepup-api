@@ -18,7 +18,11 @@ export class CirclesController {
 
   @Post()
   create(@Body() createCircleDto: CreateCircleDto, @Request() req) {
-    return this.circlesService.create(req.user.userId);
+    return this.circlesService.create(createCircleDto, req.user.userId);
+  }
+  @Get()
+  findAll() {
+    return this.circlesService.findAll();
   }
 
   @Get(':id')
@@ -27,12 +31,16 @@ export class CirclesController {
   }
 
   @Patch(':id')
-  addUser(@Param('id') id: string, @Request() req) {
+  update(
+    @Param('id') id: string,
+    @Body() updateCircleDto: UpdateCircleDto,
+    @Request() req,
+  ) {
     return this.circlesService.addUser(id, req.user.userId);
   }
 
   @Delete(':id')
-  removeUser(@Param('id') id: string, @Request() req) {
-    return this.circlesService.removeUser(id, req.user.userId);
+  remove(@Param('id') id: string, @Request() req) {
+    return this.circlesService.remove(id, req.user.userId);
   }
 }

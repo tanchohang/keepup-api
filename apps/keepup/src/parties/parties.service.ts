@@ -6,7 +6,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CirclesService } from '../circles/circles.service';
 import { UsersService } from '../users/users.service';
-import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class PartiesService {
@@ -17,27 +16,17 @@ export class PartiesService {
     @InjectModel(Party.name) private partyModel: Model<Party>,
   ) {}
 
-  async create(createPartyDto: CreatePartyDto, uid: string): Promise<void> {
-    /**
-     * Creating a new party automaticcally creates a Circle for the user
-     */
+  async create(createPartyDto: CreatePartyDto, uid: string): Promise<Party> {
     try {
-      const user = await this.usersService.findOne(uid);
-      console.log(user.get('circles'));
-      // if (user.get) {
-      // }
-      // const circle = await this.circlesService.create({
-      //   name: 'default',
-      // });
-      // return await this.partyModel.create(createPartyDto);
+      return await this.partyModel.create({ ...createPartyDto, creator: uid });
     } catch (error) {
       throw error;
     }
   }
 
-  async findAll(): Promise<Party[]> {
+  async findAll(cid: string): Promise<Party[]> {
     try {
-      return await this.partyModel.find().select('-password');
+      return await this.partyModel.find({ circle: cid });
     } catch (error) {
       throw error;
     }
@@ -63,7 +52,7 @@ export class PartiesService {
 
   async remove(id: string): Promise<Party> {
     try {
-      return await this.partyModel.findByIdAndDelete(id).select('-password');
+      return await this.partyModel.findByIdAndDelete(id);
     } catch (error) {
       throw error;
     }

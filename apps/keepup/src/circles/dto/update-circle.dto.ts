@@ -4,5 +4,7 @@ import { IsNotEmpty } from 'class-validator';
 
 export class UpdateCircleDto extends PartialType(CreateCircleDto) {
   @IsNotEmpty()
-  user: string;
+  name: string;
+
+  users?: [string];
 }

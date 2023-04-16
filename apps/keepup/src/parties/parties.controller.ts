@@ -21,11 +21,6 @@ export class PartiesController {
     return this.partiesService.create(createPartyDto, req.user.userId);
   }
 
-  @Get()
-  findAll() {
-    return this.partiesService.findAll();
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.partiesService.findOne(id);
@@ -39,5 +34,11 @@ export class PartiesController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.partiesService.remove(id);
+  }
+
+  // Non-CRUD paths
+  @Get('circle/:cid')
+  findAll(@Param('cid') cid: string) {
+    return this.partiesService.findAll(cid);
   }
 }
