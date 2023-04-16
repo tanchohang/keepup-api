@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Request,
 } from '@nestjs/common';
 import { PartiesService } from './parties.service';
 import { CreatePartyDto } from './dto/create-party.dto';
@@ -16,8 +17,8 @@ export class PartiesController {
   constructor(private readonly partiesService: PartiesService) {}
 
   @Post()
-  create(@Body() createPartyDto: CreatePartyDto) {
-    return this.partiesService.create(createPartyDto);
+  create(@Body() createPartyDto: CreatePartyDto, @Request() req) {
+    return this.partiesService.create(createPartyDto, req.user.userId);
   }
 
   @Get()

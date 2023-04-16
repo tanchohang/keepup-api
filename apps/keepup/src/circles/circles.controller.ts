@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Request,
 } from '@nestjs/common';
 import { CirclesService } from './circles.service';
 import { CreateCircleDto } from './dto/create-circle.dto';
@@ -16,13 +17,8 @@ export class CirclesController {
   constructor(private readonly circlesService: CirclesService) {}
 
   @Post()
-  create(@Body() createCircleDto: CreateCircleDto) {
-    return this.circlesService.create(createCircleDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.circlesService.findAll();
+  create(@Body() createCircleDto: CreateCircleDto, @Request() req) {
+    return this.circlesService.create(req.user.userId);
   }
 
   @Get(':id')
@@ -31,12 +27,12 @@ export class CirclesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCircleDto: UpdateCircleDto) {
-    return this.circlesService.update(+id, updateCircleDto);
+  addUser(@Param('id') id: string, @Request() req) {
+    return this.circlesService.addUser(id, req.user.userId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.circlesService.remove(id);
+  removeUser(@Param('id') id: string, @Request() req) {
+    return this.circlesService.removeUser(id, req.user.userId);
   }
 }
