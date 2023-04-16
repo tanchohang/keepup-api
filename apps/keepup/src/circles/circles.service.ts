@@ -43,10 +43,11 @@ export class CirclesService {
     uid: string,
   ): Promise<Circle> {
     try {
-      const circle = await this.circleModel.findById({ id, creator: uid });
-      circle.name = updateCircleDto.name;
-      // circle.users = [...updateCircleDto.users, ...circle.users];
-      circle.save();
+      const circle = await this.circleModel.findByIdAndUpdate(id, {
+        users: [],
+      });
+      // circle.name = updateCircleDto.name;
+
       return circle;
     } catch (error) {
       throw error;
