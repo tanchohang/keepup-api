@@ -4,7 +4,7 @@ import { JwtAuthGuard } from './guards/jwt.guard';
 import { Public } from './decorators/jwt.decorator';
 import { LocalAuthGuard } from './guards/local.guard';
 
-@Controller()
+@Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
