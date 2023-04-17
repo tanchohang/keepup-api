@@ -6,6 +6,7 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn'],
+    cors: true,
   });
   const config = new DocumentBuilder().build();
   // .setTitle('"Keep up" API Documentation')
