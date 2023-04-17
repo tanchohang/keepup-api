@@ -6,9 +6,11 @@ import mongoose, { Document } from 'mongoose';
 @Schema({ timestamps: true })
 export class Message extends Document {
   @Prop({ type: String, required: true })
-  message: string;
+  text: string;
   @Prop({ type: mongoose.Schema.Types.ObjectId, required: true })
-  user: User;
+  sender: User;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, required: true })
+  receiver: User;
   @Prop({ type: mongoose.Schema.Types.ObjectId, required: true })
   party: Party;
 }
