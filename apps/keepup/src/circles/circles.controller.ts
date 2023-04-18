@@ -20,9 +20,9 @@ export class CirclesController {
   create(@Body() createCircleDto: CreateCircleDto, @Request() req) {
     return this.circlesService.create(createCircleDto, req.user.userId);
   }
-  @Get()
-  findAll() {
-    return this.circlesService.findAll();
+  @Get('/creator')
+  findAll(@Request() req) {
+    return this.circlesService.findAllByCreator(req.user.userId);
   }
 
   @Get(':id')

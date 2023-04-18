@@ -21,9 +21,9 @@ export class CirclesService {
       throw error;
     }
   }
-  async findAll(): Promise<any> {
+  async findAllByCreator(uid: string): Promise<any> {
     try {
-      return await this.circleModel.find();
+      return await this.circleModel.find({ creator: uid });
     } catch (error) {
       throw error;
     }
