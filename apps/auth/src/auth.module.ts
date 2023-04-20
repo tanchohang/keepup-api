@@ -7,9 +7,19 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './passportStrategies/jwt.strategy';
 import { UsersModule } from 'apps/keepup/src/users/users.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Token, TokenSchema } from './entities/token.entities';
+import { RefreshTokenStrategy } from './passportStrategies/jwtrefresh.strategy';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './guards/jwt.guard';
+import { User, UserSchema } from 'apps/keepup/src/users/entities/user.entity';
 
 @Module({
   imports: [
+    MongooseModule.forFeature([
+      { name: Token.name, schema: TokenSchema },
+      { name: User.name, schema: UserSchema },
+    ]),
     ConfigModule,
     forwardRef(() => UsersModule),
     PassportModule,
@@ -17,13 +27,18 @@ import { UsersModule } from 'apps/keepup/src/users/users.module';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET'),
-        signOptions: { expiresIn: '3600s' },
       }),
       inject: [ConfigService],
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    RefreshTokenStrategy,
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}
