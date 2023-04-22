@@ -1,6 +1,10 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 import { AuthService } from '../auth.service';
@@ -21,19 +25,15 @@ export class RefreshTokenStrategy extends PassportStrategy(
 
   async validate(request: Request, payload: any): Promise<any> {
     const refreshToken = request.headers.authorization.split(' ')[1];
-    const tokenWithUser = await this.authService.validateRefreshToken(
+    const tokenWithUser = await this.authService.refreshToken(
       refreshToken,
-      payload.sub,
+      payload,
     );
     if (!tokenWithUser) {
-      throw new UnauthorizedException();
+      throw new HttpException('invalid token', 401);
     }
 
-    const accessToken = await this.authService.createAccessToken({
-      username: payload.username,
-      sub: payload.sub,
-    });
-    return { accessToken };
+    return { ...tokenWithUser };
   }
 
   //   private static extractJWT(req: RequestType): string | null {
