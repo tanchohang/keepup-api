@@ -48,17 +48,24 @@ export class AuthService {
     return null;
   }
 
-  async validateRefreshToken(
-    refreshToken: string,
-    uid: string,
-  ): Promise<boolean> {
-    const tokenWithUser = (
-      await this.tokenModel.findOne({ user: uid })
-    ).populate({ path: 'user', model: this.userModel });
+  async refreshToken(refreshToken: string, payload: any): Promise<any> {
+    const tokenWithUser = await this.tokenModel
+      .findOne({ user: payload.sub })
+      .populate({ path: 'user', model: this.userModel });
 
-    if (tokenWithUser && refreshToken === (await tokenWithUser).refreshToken)
-      return true;
-    return false;
+    if (tokenWithUser && refreshToken === (await tokenWithUser).refreshToken) {
+      const accessToken = await this.createAccessToken({
+        username: payload.username,
+        sub: payload.sub,
+      });
+      const { password, ...returnObject } = {
+        ...tokenWithUser.toObject().user,
+        accessToken,
+        refreshToken: tokenWithUser.refreshToken,
+      };
+      return { ...returnObject };
+    }
+    return null;
   }
 
   async createAccessToken(payload: any) {
@@ -71,10 +78,9 @@ export class AuthService {
 
       { expiresIn: '4h' },
     );
-    const token = await this.tokenModel.findOne({ user: payload.sub });
-    if (token) {
-      return token.refreshToken;
-    }
+    await this.tokenModel.findOneAndRemove({
+      user: payload.sub,
+    });
 
     const storedRefreshToken = await this.tokenModel.create({
       refreshToken: refresh_token,
