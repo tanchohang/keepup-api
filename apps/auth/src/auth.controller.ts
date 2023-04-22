@@ -20,20 +20,20 @@ export class AuthController {
   @Public()
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Request() req): Promise<any> {
+  async login(@Request() req) {
     return { ...req.user, ...(await this.authService.login(req.user)) };
   }
-
+  @Public()
   @UseGuards(RefreshAuthGuard)
   @Get('refresh')
   async refresh(@Request() req): Promise<any> {
-    const { password, ...user } = req.user;
+    const { ...user } = req.user;
     return user;
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  profile() {
+  profile(@Request() req) {
     return 'user';
   }
 
