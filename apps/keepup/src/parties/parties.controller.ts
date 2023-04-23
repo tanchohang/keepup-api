@@ -18,7 +18,7 @@ export class PartiesController {
 
   @Post()
   create(@Body() createPartyDto: CreatePartyDto, @Request() req) {
-    return this.partiesService.create(createPartyDto, req.user.userId);
+    return this.partiesService.create(createPartyDto, req.user.id);
   }
 
   @Get(':id')
