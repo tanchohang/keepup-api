@@ -8,6 +8,7 @@ import { CirclesModule } from './circles/circles.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RequestModule } from './request/request.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { RequestModule } from './request/request.module';
       // 'mongodb://root:example@localhost:27017/keepup?authSource=admin',
     ),
     RequestModule,
+    MessagesModule,
   ],
   controllers: [],
   providers: [],

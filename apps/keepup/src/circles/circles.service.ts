@@ -23,7 +23,7 @@ export class CirclesService {
   }
   async findAllByCreator(uid: string): Promise<any> {
     try {
-      return await this.circleModel.find({ creator: uid });
+      return await this.circleModel.findOne({ creator: uid });
     } catch (error) {
       throw error;
     }

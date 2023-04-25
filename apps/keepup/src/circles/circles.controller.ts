@@ -17,30 +17,30 @@ export class CirclesController {
   constructor(private readonly circlesService: CirclesService) {}
 
   @Post()
-  create(@Body() createCircleDto: CreateCircleDto, @Request() req) {
-    return this.circlesService.create(createCircleDto, req.user.userId);
+  async create(@Body() createCircleDto: CreateCircleDto, @Request() req) {
+    return await this.circlesService.create(createCircleDto, req.user.id);
   }
   @Get('/creator')
-  findAll(@Request() req) {
-    return this.circlesService.findAllByCreator(req.user.userId);
+  async findAll(@Request() req) {
+    return await this.circlesService.findAllByCreator(req.user.id);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.circlesService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.circlesService.findOne(id);
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateCircleDto: UpdateCircleDto,
     @Request() req,
   ) {
-    return this.circlesService.addUser(id, req.user.userId);
+    return await this.circlesService.addUser(id, req.user.id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Request() req) {
-    return this.circlesService.remove(id, req.user.userId);
+  async remove(@Param('id') id: string, @Request() req) {
+    return await this.circlesService.remove(id, req.user.id);
   }
 }

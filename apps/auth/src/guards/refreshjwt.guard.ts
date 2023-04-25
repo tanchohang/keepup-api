@@ -12,6 +12,7 @@ import {
   JsonWebTokenError,
   NotBeforeError,
 } from 'jsonwebtoken';
+import { Observable, of } from 'rxjs';
 
 @Injectable()
 export class RefreshAuthGuard extends AuthGuard('jwtrefresh') {
@@ -19,7 +20,7 @@ export class RefreshAuthGuard extends AuthGuard('jwtrefresh') {
     super();
   }
 
-  canActivate(context: ExecutionContext) {
+  async canActivate(context: ExecutionContext): Promise<any> {
     const request: Request = context.switchToHttp().getRequest();
     const refreshToken = request.headers.authorization.split(' ')[1];
     // return this.authService.validateRefreshToken(refreshToken);
@@ -36,10 +37,5 @@ export class RefreshAuthGuard extends AuthGuard('jwtrefresh') {
       }
       throw new UnauthorizedException();
     }
-  }
-
-  async verifyJwt(refreshToken: string) {
-    const payload = await this.jwtService.verify(refreshToken);
-    return payload;
   }
 }

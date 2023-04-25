@@ -3,7 +3,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './passportStrategies/local.strategy';
 import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './passportStrategies/jwt.strategy';
 import { UsersModule } from 'apps/keepup/src/users/users.module';
@@ -13,6 +13,7 @@ import { RefreshTokenStrategy } from './passportStrategies/jwtrefresh.strategy';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { User, UserSchema } from 'apps/keepup/src/users/entities/user.entity';
+import { WsJwtStrategy } from './passportStrategies/wsjwt.strategy';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { User, UserSchema } from 'apps/keepup/src/users/entities/user.entity';
     LocalStrategy,
     JwtStrategy,
     RefreshTokenStrategy,
+    WsJwtStrategy,
     { provide: APP_GUARD, useClass: JwtAuthGuard },
   ],
   exports: [AuthService],

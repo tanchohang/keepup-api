@@ -17,28 +17,32 @@ export class PartiesController {
   constructor(private readonly partiesService: PartiesService) {}
 
   @Post()
-  create(@Body() createPartyDto: CreatePartyDto, @Request() req) {
-    return this.partiesService.create(createPartyDto, req.user.id);
+  async create(@Body() createPartyDto: CreatePartyDto, @Request() req) {
+    return await this.partiesService.create(createPartyDto, req.user.id);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.partiesService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.partiesService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePartyDto: UpdatePartyDto) {
-    return this.partiesService.update(+id, updatePartyDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updatePartyDto: UpdatePartyDto,
+  ) {
+    return await this.partiesService.update(+id, updatePartyDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.partiesService.remove(id);
+  async remove(@Param('id') id: string) {
+    return await this.partiesService.remove(id);
   }
 
   // Non-CRUD paths
   @Get('circle/:cid')
-  findAll(@Param('cid') cid: string) {
-    return this.partiesService.findAll(cid);
+  async findAll(@Param('cid') cid: string) {
+    const res = await this.partiesService.findAll(cid);
+    return res;
   }
 }
