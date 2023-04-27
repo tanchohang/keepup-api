@@ -11,6 +11,7 @@ import {
 import { PartiesService } from './parties.service';
 import { CreatePartyDto } from './dto/create-party.dto';
 import { UpdatePartyDto } from './dto/update-party.dto';
+import { CreateMessageDto } from '../messages/dto/create-message.dto';
 
 @Controller('parties')
 export class PartiesController {
@@ -36,7 +37,7 @@ export class PartiesController {
     @Param('id') id: string,
     @Body() updatePartyDto: UpdatePartyDto,
   ) {
-    return await this.partiesService.update(+id, updatePartyDto);
+    return await this.partiesService.update(id, updatePartyDto);
   }
 
   @Delete(':id')
@@ -44,10 +45,37 @@ export class PartiesController {
     return await this.partiesService.remove(id);
   }
 
-  // Non-CRUD paths
-  // @Get(':cid')
-  // async findAllByCircle(@Param('cid') cid: string@req) {
-  //   const res = await this.partiesService.findAll(cid,);
-  //   return res;
-  // }
+  /****Message Services */
+
+  @Get(':pid/messages')
+  async getAllMessages(@Param('pid') pid: string) {
+    return await this.partiesService.getMessages(pid);
+  }
+
+  @Post(':pid/messages')
+  async addMessageToParty(
+    @Param('pid') pid: string,
+    @Body() createMessageDto: CreateMessageDto,
+    @Request() req,
+  ) {
+    const res = await this.partiesService.addMessage(
+      pid,
+      createMessageDto,
+      req.user.id,
+    );
+    return res;
+  }
+  @Delete(':pid/messages')
+  async removeMessageToParty(
+    @Param('pid') pid: string,
+    createMessageDto: CreateMessageDto,
+    @Request() req,
+  ) {
+    const res = await this.partiesService.addMessage(
+      pid,
+      createMessageDto,
+      req.user.id,
+    );
+    return res;
+  }
 }

@@ -18,19 +18,15 @@ export class MessagesService {
     return response;
   }
 
-  async findAllForParty(pid: string) {
-    return await this.messsageModel.find({ party: pid });
+  async findOne(id: string) {
+    return await this.messsageModel.findById(id);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} message`;
-  }
-
-  update(id: number, updateMessageDto: UpdateMessageDto) {
+  async update(id: string, updateMessageDto: UpdateMessageDto) {
     return `This action updates a #${id} message`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} message`;
+  async remove(id: string) {
+    const message = await this.messsageModel.findByIdAndDelete(id);
   }
 }

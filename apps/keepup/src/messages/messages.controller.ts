@@ -21,14 +21,9 @@ export class MessagesController {
     return this.messagesService.create(createMessageDto, req.user.id);
   }
 
-  @Get('party/:pid')
-  async findAll(@Param('pid') pid: string) {
-    return await this.messagesService.findAllForParty(pid);
-  }
-
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.messagesService.findOne(+id);
+    return this.messagesService.findOne(id);
   }
 
   @Patch(':id')
@@ -36,11 +31,11 @@ export class MessagesController {
     @Param('id') id: string,
     @Body() updateMessageDto: UpdateMessageDto,
   ) {
-    return await this.messagesService.update(+id, updateMessageDto);
+    return await this.messagesService.update(id, updateMessageDto);
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    return this.messagesService.remove(+id);
+    return this.messagesService.remove(id);
   }
 }
