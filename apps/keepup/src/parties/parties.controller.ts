@@ -20,6 +20,11 @@ export class PartiesController {
   async create(@Body() createPartyDto: CreatePartyDto, @Request() req) {
     return await this.partiesService.create(createPartyDto, req.user.id);
   }
+  @Get('')
+  async findAllByCircle(@Request() req) {
+    const res = await this.partiesService.findAll(req.user.id);
+    return res;
+  }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
@@ -40,9 +45,9 @@ export class PartiesController {
   }
 
   // Non-CRUD paths
-  @Get('circle/:cid')
-  async findAll(@Param('cid') cid: string) {
-    const res = await this.partiesService.findAll(cid);
-    return res;
-  }
+  // @Get(':cid')
+  // async findAllByCircle(@Param('cid') cid: string@req) {
+  //   const res = await this.partiesService.findAll(cid,);
+  //   return res;
+  // }
 }

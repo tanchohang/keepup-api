@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import * as bcrypt from 'bcrypt';
+import { Circle } from '../../circles/entities/circle.entity';
 
 @Schema({
   timestamps: true,
@@ -18,6 +19,8 @@ export class User extends Document {
   email: string;
   @Prop({ type: String, required: true })
   password: string;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Circle' })
+  circle: Circle;
 
   comparePassword: (candidatePassword: string) => boolean;
 }

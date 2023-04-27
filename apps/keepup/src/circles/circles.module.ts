@@ -3,12 +3,12 @@ import { CirclesService } from './circles.service';
 import { CirclesController } from './circles.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Circle, CircleSchema } from './entities/circle.entity';
-import { UsersModule } from '../users/users.module';
+import { User, UserSchema } from '../users/entities/user.entity';
 
 @Module({
   imports: [
-    UsersModule,
     MongooseModule.forFeature([{ name: Circle.name, schema: CircleSchema }]),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [CirclesController],
   providers: [CirclesService],

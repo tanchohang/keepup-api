@@ -43,4 +43,5 @@ export class CreateUserDto {
 
   // @Matches(/[]/, { message: 'password must have no spaces' })
   password: string;
+  circles?: string;
 }

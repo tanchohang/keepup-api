@@ -11,6 +11,7 @@ import { User } from './entities/user.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AuthService } from 'apps/auth/src/auth.service';
+import { CirclesService } from '../circles/circles.service';
 
 @Injectable()
 export class UsersService {
@@ -18,18 +19,31 @@ export class UsersService {
     @InjectModel(User.name) private userModel: Model<User>,
     @Inject(forwardRef(() => AuthService))
     private authService: AuthService,
+    private circleService: CirclesService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<any> {
     try {
-      const user = (await this.userModel.create(createUserDto)).toObject();
+      const user = await this.userModel.create(createUserDto);
 
+      if (user) {
+        const circle = await this.circleService.create(
+          { name: 'default' },
+          user.id,
+        );
+        if (circle) {
+          user.circle = circle._id;
+          user.save();
+        } else {
+          user.deleteOne();
+        }
+      }
       const token = await this.authService.login({
-        username: createUserDto.username,
+        username: user.username,
         id: user.id,
       });
 
-      return { ...user, ...token };
+      return { ...user.toObject(), ...token };
     } catch (error) {
       // console.error(error.keyPattern);
       if (error.code === 11000) {

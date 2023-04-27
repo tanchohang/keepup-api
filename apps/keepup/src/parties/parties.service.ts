@@ -24,9 +24,12 @@ export class PartiesService {
     }
   }
 
-  async findAll(cid: string): Promise<Party[]> {
+  async findAll(uid: string): Promise<Party[]> {
     try {
-      return await this.partyModel.find({ circle: cid });
+      const partiesWithMe = await this.partyModel.find({ users: uid });
+      const myParties = await this.partyModel.find({ creator: uid });
+
+      return partiesWithMe.concat(myParties);
     } catch (error) {
       throw error;
     }

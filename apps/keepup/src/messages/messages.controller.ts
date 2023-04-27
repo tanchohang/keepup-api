@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Request,
+} from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
@@ -8,27 +17,30 @@ export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
 
   @Post()
-  create(@Body() createMessageDto: CreateMessageDto) {
-    return this.messagesService.create(createMessageDto);
+  async create(@Body() createMessageDto: CreateMessageDto, @Request() req) {
+    return this.messagesService.create(createMessageDto, req.user.id);
   }
 
-  @Get()
-  findAll() {
-    return this.messagesService.findAll();
+  @Get('party/:pid')
+  async findAll(@Param('pid') pid: string) {
+    return await this.messagesService.findAllForParty(pid);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return this.messagesService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMessageDto: UpdateMessageDto) {
-    return this.messagesService.update(+id, updateMessageDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateMessageDto: UpdateMessageDto,
+  ) {
+    return await this.messagesService.update(+id, updateMessageDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.messagesService.remove(+id);
   }
 }

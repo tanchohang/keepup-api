@@ -8,16 +8,15 @@ Cirlce:
 */
 @Schema({ timestamps: true })
 export class Circle extends Document {
-  // @Prop({ type: String, required: true })
-  // name: string;
-  @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }]) //TODO:must have creator
+  @Prop({ type: String, required: true })
+  name: string;
+  @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]) //TODO:must have creator
   users: User[];
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
-    unique: true,
   }) //TODO:must have creator
   creator: User;
 }
