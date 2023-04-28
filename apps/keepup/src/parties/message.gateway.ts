@@ -36,7 +36,7 @@ export class MessageGateway implements OnGatewayInit {
   handleDisconnect(client: Socket) {
     // console.log('disconnect', client.id);
   }
-  @UseGuards(WsJwtAuthGuard)
+
   @SubscribeMessage('createMessage')
   async create(client: Socket, payload: { text: string; party: string }) {
     const message = await this.partiesService.addMessage(
