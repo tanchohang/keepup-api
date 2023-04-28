@@ -10,13 +10,19 @@ import { Namespace, Socket } from 'socket.io';
 import { PartiesService } from '../parties/parties.service';
 import { UseGuards } from '@nestjs/common';
 import { WsJwtAuthGuard } from 'apps/auth/src/guards/wsjwt.guard';
+import { userInfo } from 'os';
+import { UsersService } from '../users/users.service';
 
+@UseGuards(WsJwtAuthGuard)
 @WebSocketGateway({
   namespace: 'messages',
   cors: { origin: ['http://127.0.0.1:5173', 'localhost:5173'] },
 })
 export class MessageGateway implements OnGatewayInit {
-  constructor(private readonly partiesService: PartiesService) {}
+  constructor(
+    private readonly partiesService: PartiesService,
+    private readonly userService: UsersService,
+  ) {}
 
   @WebSocketServer() server: Namespace;
 
@@ -47,13 +53,12 @@ export class MessageGateway implements OnGatewayInit {
     this.server.socketsJoin(pid);
     // console.log('joinParty', pid);
   }
-
+  // @UseGuards(WsJwtAuthGuard)
   @SubscribeMessage('typing')
-  async typing(
-    @MessageBody('isTyping') isTyping: boolean,
-    @ConnectedSocket() client: Socket,
-  ) {
-    // const name = await this.messagesService.getClientUsername(client);
-    // client.broadcast.emit('typing', { name, isTyping });
+  async typing(client: Socket, pid: string) {
+    this.server.to(pid).emit('isTyping', {
+      username: client.data.user.username,
+      id: client.data.user.id,
+    });
   }
 }
