@@ -8,7 +8,7 @@ import {
 } from '@nestjs/websockets';
 import { WsJwtAuthGuard } from 'apps/auth/src/guards/wsjwt.guard';
 import { Server, Socket } from 'socket.io';
-import { OnlineService } from './online.service';
+import { UsersService } from '../users/users.service';
 
 @UseGuards(WsJwtAuthGuard)
 @WebSocketGateway({
@@ -17,29 +17,38 @@ import { OnlineService } from './online.service';
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
 
-  constructor(private onlineService: OnlineService) {}
+  constructor(private userService: UsersService) {}
 
   handleConnection(client: any, ...args: any[]) {
-    console.log('chat connect', client.data);
+    console.log('chat connect');
     return this.server;
   }
 
   async handleDisconnect(client: Socket) {
     console.log('chat disconnect');
-    const deleted = await this.onlineService.removeUser(client.data.user.id);
-    if (deleted.acknowledged) {
+    const onlineUser = await this.userService.findByUsername(
+      client.data.user.username,
+    );
+    if (onlineUser) {
+      onlineUser.client = null;
+      onlineUser.save();
       console.log('user offline');
     }
   }
 
   @SubscribeMessage('online')
   async handleOnline(client: Socket) {
-    const onlineUser = await this.onlineService.addUser(
-      client.data.user.id,
-      client.id,
+    // const onlineUser = await this.onlineService.addUser(
+    //   client.data.user.id,
+    //   client.id,
+    // );
+    const onlineUser = await this.userService.findByUsername(
+      client.data.user.username,
     );
     if (onlineUser) {
-      console.log('user online');
+      onlineUser.client = client.id;
+      onlineUser.save();
+      console.log('user online', client.id);
     }
   }
 }

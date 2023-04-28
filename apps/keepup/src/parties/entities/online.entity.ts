@@ -6,7 +6,12 @@ import { User } from '../../users/entities/user.entity';
 export class Online {
   @Prop({ type: String, required: true })
   client: string;
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    unique: true,
+  })
   user: User;
 }
 

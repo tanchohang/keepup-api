@@ -17,6 +17,8 @@ export class User extends Document {
   lastname: string;
   @Prop({ type: String, required: true, index: true, unique: true })
   email: string;
+  @Prop({ type: String })
+  client: string;
   @Prop({ type: String, required: true })
   password: string;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Circle' })

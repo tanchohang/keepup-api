@@ -25,6 +25,8 @@ export class CreateUserDto {
   })
   username: string;
 
+  client?: string;
+
   @IsNotEmpty()
   @IsEmail()
   email: string;
