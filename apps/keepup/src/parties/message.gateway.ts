@@ -31,10 +31,10 @@ export class MessageGateway implements OnGatewayInit {
     // server.
   }
   handleConnection(client: Socket, ...args: any[]) {
-    console.log('connect', client.id);
+    // console.log('connect', client.id);
   }
   handleDisconnect(client: Socket) {
-    console.log('disconnect', client.id);
+    // console.log('disconnect', client.id);
   }
   @UseGuards(WsJwtAuthGuard)
   @SubscribeMessage('createMessage')
