@@ -81,19 +81,19 @@ export class PartiesService {
     pid: string,
     createMessageDto: CreateMessageDto,
     uid: string,
-  ): Promise<Party> {
+  ): Promise<Message> {
     try {
       const party = await this.partyModel.findById(pid);
       const message = await this.messageService.create(createMessageDto, uid);
       party.messages.push(message);
       party.save();
-      return party;
+      return message;
     } catch (error) {
       throw error;
     }
   }
 
-  async removeMessage(pid: string, mid: string): Promise<Party> {
+  async removeMessage(pid: string, mid: string): Promise<boolean> {
     try {
       const deletedMessage = await this.messageService.remove(mid);
       const party = await this.partyModel.findById(pid);
@@ -102,7 +102,9 @@ export class PartiesService {
       party.messages.splice(msgIndex, 1);
       party.save();
 
-      return party;
-    } catch (error) {}
+      return true;
+    } catch (error) {
+      throw error;
+    }
   }
 }

@@ -8,9 +8,19 @@ import { UsersModule } from '../users/users.module';
 import { MessagesService } from '../messages/messages.service';
 import { MessagesModule } from '../messages/messages.module';
 import { Message, MessageSchema } from '../messages/entities/message.entity';
+import { MessageGateway } from './message.gateway';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET'),
+      }),
+      inject: [ConfigService],
+    }),
     UsersModule,
     CirclesModule,
     MessagesModule,
@@ -18,7 +28,7 @@ import { Message, MessageSchema } from '../messages/entities/message.entity';
     MongooseModule.forFeature([{ name: Message.name, schema: MessageSchema }]),
   ],
   controllers: [PartiesController],
-  providers: [PartiesService, MessagesService],
+  providers: [PartiesService, MessagesService, MessageGateway],
   exports: [PartiesService],
 })
 export class PartiesModule {}
