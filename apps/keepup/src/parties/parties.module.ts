@@ -11,6 +11,7 @@ import { Message, MessageSchema } from '../messages/entities/message.entity';
 import { MessageGateway } from './message.gateway';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ChatGateway } from './chat.gateway';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     MongooseModule.forFeature([{ name: Message.name, schema: MessageSchema }]),
   ],
   controllers: [PartiesController],
-  providers: [PartiesService, MessagesService, MessageGateway],
+  providers: [PartiesService, MessagesService, MessageGateway, ChatGateway],
   exports: [PartiesService],
 })
 export class PartiesModule {}
