@@ -25,7 +25,7 @@ export class CreateUserDto {
   })
   username: string;
 
-  client?: string;
+  online?: boolean;
 
   @IsNotEmpty()
   @IsEmail()

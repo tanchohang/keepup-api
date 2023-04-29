@@ -30,7 +30,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.data.user.username,
     );
     if (onlineUser) {
-      onlineUser.client = null;
+      onlineUser.online = false;
       onlineUser.save();
       console.log('user offline');
     }
@@ -46,7 +46,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.data.user.username,
     );
     if (onlineUser) {
-      onlineUser.client = client.id;
+      onlineUser.online = true;
       onlineUser.save();
       console.log('user online', client.id);
     }
