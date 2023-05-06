@@ -12,8 +12,8 @@ import { MessageGateway } from './message.gateway';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ChatGateway } from './chat.gateway';
-import { Online, OnlineSchema } from './entities/online.entity';
-import { OnlineService } from './online.service';
+import { PeerService } from './peer.service';
+import { Peer, PeerSchema } from './entities/peers.entity';
 
 @Module({
   imports: [
@@ -29,7 +29,7 @@ import { OnlineService } from './online.service';
     MessagesModule,
     MongooseModule.forFeature([{ name: Party.name, schema: PartySchema }]),
     MongooseModule.forFeature([{ name: Message.name, schema: MessageSchema }]),
-    MongooseModule.forFeature([{ name: Online.name, schema: OnlineSchema }]),
+    MongooseModule.forFeature([{ name: Peer.name, schema: PeerSchema }]),
   ],
   controllers: [PartiesController],
   providers: [
@@ -37,7 +37,7 @@ import { OnlineService } from './online.service';
     MessagesService,
     MessageGateway,
     ChatGateway,
-    OnlineService,
+    PeerService,
   ],
   exports: [PartiesService],
 })
