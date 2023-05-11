@@ -11,7 +11,6 @@ import { Message, MessageSchema } from '../messages/entities/message.entity';
 import { MessageGateway } from './message.gateway';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ChatGateway } from './chat.gateway';
 import { PeerService } from './peer.service';
 import { Peer, PeerSchema } from './entities/peers.entity';
 
@@ -32,13 +31,7 @@ import { Peer, PeerSchema } from './entities/peers.entity';
     MongooseModule.forFeature([{ name: Peer.name, schema: PeerSchema }]),
   ],
   controllers: [PartiesController],
-  providers: [
-    PartiesService,
-    MessagesService,
-    MessageGateway,
-    ChatGateway,
-    PeerService,
-  ],
+  providers: [PartiesService, MessagesService, MessageGateway, PeerService],
   exports: [PartiesService],
 })
 export class PartiesModule {}

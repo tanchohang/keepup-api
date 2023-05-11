@@ -82,7 +82,8 @@ export class UsersService {
 
   async findByUsername(username: string): Promise<User> {
     try {
-      return await this.userModel.findOne({ username });
+      const res = await this.userModel.findOne({ username }).exec();
+      return res;
     } catch (error) {
       throw error;
     }

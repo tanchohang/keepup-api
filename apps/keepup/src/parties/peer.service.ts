@@ -8,21 +8,45 @@ import { Peer } from './entities/peers.entity';
 export class PeerService {
   constructor(@InjectModel(Peer.name) private peerModel: Model<Peer>) {}
 
-  async createPeer() {
-    return await this.peerModel.create({
-      offerCandidates: null,
-      answerCandidates: null,
-    });
-  }
-  async addOffer(id: string, offerCandidates: any) {
-    return await this.peerModel.findByIdAndUpdate(id, { offerCandidates });
+  async createPeer(perrCon: {
+    offer: any;
+    answer?: any;
+    party: string;
+    offerCandidates?: any;
+    answerCandidates?: any;
+  }) {
+    const peer = await this.peerModel.create(perrCon);
+    return peer;
   }
 
-  async addAnswer(id: string, answerCandidates: string) {
-    return await this.peerModel.findByIdAndUpdate(id, { answerCandidates });
+  async addAnswer(id: string, answer: any) {
+    return await this.peerModel.findOneAndUpdate(
+      { party: id },
+      { answer },
+      { new: true },
+    );
+  }
+
+  async addOfferCandidates(id: string, offerCandidates: any) {
+    return await this.peerModel.findOneAndUpdate(
+      { party: id },
+      {
+        offerCandidates,
+      },
+      { new: true },
+    );
+  }
+
+  async addAnswerCanditates(id: string, answerCandidates: any) {
+    return await this.peerModel.findOneAndUpdate(
+      { party: id },
+      { answerCandidates },
+      { new: true },
+    );
   }
 
   async removePeer(id: string) {
-    return await this.peerModel.findByIdAndDelete(id);
+    if (await this.peerModel.findOne({ party: id }))
+      return await this.peerModel.findOneAndDelete({ party: id });
   }
 }

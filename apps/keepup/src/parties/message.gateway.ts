@@ -3,62 +3,170 @@ import {
   SubscribeMessage,
   MessageBody,
   WebSocketServer,
-  ConnectedSocket,
   OnGatewayInit,
+  ConnectedSocket,
 } from '@nestjs/websockets';
-import { Namespace, Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { PartiesService } from '../parties/parties.service';
-import { UseGuards } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { WsJwtAuthGuard } from 'apps/auth/src/guards/wsjwt.guard';
-import { userInfo } from 'os';
 import { UsersService } from '../users/users.service';
+import { PeerService } from './peer.service';
+import { pid } from 'process';
 
 @UseGuards(WsJwtAuthGuard)
 @WebSocketGateway({
-  namespace: 'messages',
   cors: { origin: ['http://127.0.0.1:5173', 'localhost:5173'] },
 })
 export class MessageGateway implements OnGatewayInit {
   constructor(
     private readonly partiesService: PartiesService,
     private readonly userService: UsersService,
+    private peerService: PeerService,
   ) {}
 
-  @WebSocketServer() server: Namespace;
+  @WebSocketServer() server: Server;
 
-  afterInit(server: Namespace) {
+  afterInit(server: Server) {
     console.log('afterInit');
     // server.
   }
-  handleConnection(client: Socket, ...args: any[]) {
-    // console.log('connect', client.id);
+  handleConnection(socket: Socket, ...args: any[]) {
+    console.log('chat connect');
   }
-  handleDisconnect(client: Socket) {
-    // console.log('disconnect', client.id);
+  async handleDisconnect(socket: Socket) {
+    console.log('chat disconnect');
+    const onlineUser = await this.userService.findByUsername(
+      socket.data.user.username,
+    );
+    if (onlineUser) {
+      onlineUser.online = false;
+      onlineUser.save();
+      console.log(socket.data.user.username, ' offline');
+    }
   }
 
   @SubscribeMessage('createMessage')
-  async create(client: Socket, payload: { text: string; party: string }) {
+  async create(socket: Socket, payload: { text: string; party: string }) {
     const message = await this.partiesService.addMessage(
       payload.party,
       { text: payload.text },
-      client.data.user.id,
+      socket.data.user.id,
     );
     this.server.to(payload.party).emit('broadcastParty', message);
     // return message;
   }
 
   @SubscribeMessage('joinParty')
-  joinParty(@MessageBody() pid: string) {
+  joinParty(@MessageBody() pid: string, @ConnectedSocket() socket: Socket) {
+    console.log(socket.data.user.username, 'joinParty');
     this.server.socketsJoin(pid);
-    // console.log('joinParty', pid);
   }
   // @UseGuards(WsJwtAuthGuard)
   @SubscribeMessage('typing')
-  async typing(client: Socket, pid: string) {
-    this.server.to(pid).emit('isTyping', {
-      username: client.data.user.username,
-      id: client.data.user.id,
+  async typing(socket: Socket, pid: string) {
+    socket.to(pid).emit('isTyping', {
+      username: socket.data.user.username,
+      id: socket.data.user.id,
     });
+  }
+
+  @SubscribeMessage('call')
+  async call(
+    @MessageBody() body: { pid: string; offer: any },
+    @ConnectedSocket() socket: Socket,
+  ) {
+    const peerCon = await this.peerService.createPeer({
+      offer: body.offer,
+      answer: null,
+      party: body.pid,
+    });
+
+    if (peerCon) {
+      socket.broadcast
+        .to(peerCon.party.toString())
+        .emit('incomingCall', { peer: peerCon._id, offer: body.offer });
+      return peerCon;
+    }
+    throw new BadRequestException();
+  }
+
+  @SubscribeMessage('setAnswer')
+  async answer(
+    @MessageBody() body: { id: string; answer: any },
+    @ConnectedSocket() socket: Socket,
+  ) {
+    const peerCon = await this.peerService.addAnswer(body.id, body.answer);
+    if (peerCon) {
+      socket.broadcast
+        .to(peerCon.party.toString())
+        .emit('onAnswer', body.answer);
+
+      return peerCon;
+    }
+    throw new BadRequestException();
+  }
+
+  @SubscribeMessage('hangup')
+  async hangup(@MessageBody() pid: string, @ConnectedSocket() socket: Socket) {
+    socket.to(pid).emit('hungup', socket.data.user);
+  }
+
+  @SubscribeMessage('setOfferCandidates')
+  async setOfferCandidates(
+    @MessageBody() body: { id: string; candidates: any },
+    @ConnectedSocket() socket: Socket,
+  ) {
+    const peerConnection = await this.peerService.addOfferCandidates(
+      body.id,
+      body.candidates,
+    );
+
+    if (peerConnection) {
+      socket.broadcast.emit(
+        'onOfferIceCandidates',
+        peerConnection.offerCandidates,
+      );
+      return peerConnection;
+    }
+  }
+
+  @SubscribeMessage('setAnswerCandidates')
+  async answerCandidates(
+    @MessageBody() body: { id: string; candidates: any },
+    @ConnectedSocket() socket: Socket,
+  ) {
+    const peerConnection = await this.peerService.addAnswerCanditates(
+      body.id,
+      body.candidates,
+    );
+    socket.broadcast
+      .to(peerConnection.party.toString())
+      .emit('onAnswerIceCandidates', peerConnection.answerCandidates);
+    return peerConnection;
+  }
+
+  @SubscribeMessage('removePeer')
+  async removePeer(
+    @MessageBody() body: { id: string },
+    @ConnectedSocket() socket: Socket,
+  ) {
+    const peerConnection = await this.peerService.removePeer(body.id);
+    //   socket.broadcast
+    //     .to(peerConnection.party.toString())
+    //     .emit('onAnswerIceCandidates', peerConnection.answerCandidates);
+    //   return peerConnection;
+  }
+
+  @SubscribeMessage('online')
+  async handleOnline(client: Socket) {
+    const onlineUser = await this.userService.findByUsername(
+      client.data.user?.username,
+    );
+    if (onlineUser) {
+      onlineUser.online = true;
+      onlineUser.save();
+      console.log(client.data.user.username, 'online');
+    }
   }
 }
