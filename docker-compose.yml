@@ -1,0 +1,45 @@
+version: '3.7'
+services:
+  keepup-api:
+    container_name: keepup-api
+    restart: unless-stopped
+    build: ./
+    ports:
+      - 3000:3000
+      - 8000:8000
+    environment:
+      - MONGO_URI=mongodb+srv://tanchohang:7YTqMBWaUciSyjzY@cluster0.id5shyp.mongodb.net/?retryWrites=true&w=majority
+      - JWT_SECRET=def0090101023d3e3db77a864ae028538963352b70da7c2cc63924a0f011b40d0f904fbab3b0d7d2611b9aacf277f8ab2a7d284a822ec9770b0448c6bc06bdcf
+      - REFRESH_JWT_SECRET=2721fc5c639824baf8062bc412b81c1ce54a3da55a9c23d13df414865bc1f7d42becff2e55b74ba85be9d93acbb54a8530fb46fc214f54a17bf55d504f1d2483
+
+      - NODE_ENV=production
+      # - BASE_URL=https://api.keepup.tanchohang.dev
+      - BASE_URL=http://localhost
+    user: "node:node"
+
+  keepup-client:
+    container_name: keepup-client
+    restart: unless-stopped
+    build: ../keepup-client/
+    ports:
+      - 4173:4173
+      - 5173:5173
+      
+    environment:
+      - BASE_URL=https://keepup.tanchohang.dev
+      - WDS_SOCKET_PATH=0
+    # volumes:
+      # - ../keepup-client:/usr/app
+  nginx:
+    depends_on:
+      - keepup-client
+      # - keepup-api
+    container_name: nginx
+    restart: unless-stopped
+    build: ./nginx
+    ports:
+      - 80:80
+      # - 443:443
+    volumes:
+      #   - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/letsencrypt:/etc/letsencrypt/

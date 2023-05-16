@@ -7,7 +7,7 @@ import { PartiesModule } from './parties/parties.module';
 import { CirclesModule } from './circles/circles.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { RequestModule } from './request/request.module';
+
 import { MessagesModule } from './messages/messages.module';
 
 @Module({
@@ -19,11 +19,7 @@ import { MessagesModule } from './messages/messages.module';
     ActivitiesModule,
     CirclesModule,
     PartiesModule,
-    MongooseModule.forRoot(
-      process.env.MONGO_URI,
-      // 'mongodb://root:example@localhost:27017/keepup?authSource=admin',
-    ),
-    RequestModule,
+    MongooseModule.forRoot(process.env.MONGO_URI),
     MessagesModule,
   ],
   controllers: [],

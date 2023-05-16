@@ -1,0 +1,15 @@
+dist
+public
+uploads
+
+
+.git/
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+node_modules/
+nginx/
+.env
+
+.DS_Store

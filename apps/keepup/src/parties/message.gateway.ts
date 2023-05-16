@@ -12,11 +12,11 @@ import { BadRequestException, UseGuards } from '@nestjs/common';
 import { WsJwtAuthGuard } from 'apps/auth/src/guards/wsjwt.guard';
 import { UsersService } from '../users/users.service';
 import { PeerService } from './peer.service';
-import { pid } from 'process';
 
 @UseGuards(WsJwtAuthGuard)
 @WebSocketGateway({
-  cors: { origin: ['http://127.0.0.1:5173', 'localhost:5173'] },
+  cors: { origin: '*' },
+  path: '/ws',
 })
 export class MessageGateway implements OnGatewayInit {
   constructor(
