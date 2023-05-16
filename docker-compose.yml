@@ -33,7 +33,7 @@ services:
   nginx:
     depends_on:
       - keepup-client
-      # - keepup-api
+      - keepup-api
     container_name: nginx
     restart: unless-stopped
     build: ./nginx
@@ -41,5 +41,5 @@ services:
       - 80:80
       - 443:443
     volumes:
-      #   - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+        # - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./nginx/letsencrypt:/etc/letsencrypt/

@@ -20,9 +20,6 @@ COPY ./original.conf /etc/nginx/conf.d/default.conf
 # Expose the listening port
 EXPOSE 80
 EXPOSE 443
-EXPOSE 3500
-
-
 
 
 
