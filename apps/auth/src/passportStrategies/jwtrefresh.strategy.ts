@@ -8,13 +8,23 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 import { AuthService } from '../auth.service';
+import { JwtService } from '@nestjs/jwt';
+import {
+  TokenExpiredError,
+  JsonWebTokenError,
+  NotBeforeError,
+} from 'jsonwebtoken';
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
   Strategy,
   'jwtrefresh',
 ) {
-  constructor(configService: ConfigService, private authService: AuthService) {
+  constructor(
+    configService: ConfigService,
+    private authService: AuthService,
+    private jwtService: JwtService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -23,23 +33,30 @@ export class RefreshTokenStrategy extends PassportStrategy(
     });
   }
 
-  async validate(request: Request, payload: any): Promise<any> {
+  async authenticate(request: Request) {
     const refreshToken = request.headers.authorization.split(' ')[1];
-    const tokenWithUser = await this.authService.refreshToken(
-      refreshToken,
-      payload,
-    );
-    if (!tokenWithUser) {
-      throw new HttpException('invalid token', 401);
+
+    try {
+      const payload = await this.jwtService.verify(refreshToken);
+      if (payload) {
+        const tokenWithUser = await this.authService.refreshToken(
+          refreshToken,
+          payload,
+        );
+        if (!tokenWithUser) {
+          this.fail(401);
+        }
+        this.success(tokenWithUser);
+      }
+    } catch (err) {
+      if (
+        err instanceof JsonWebTokenError ||
+        err instanceof NotBeforeError ||
+        err instanceof TokenExpiredError
+      ) {
+        this.error(new HttpException(err.message, 498));
+      }
+      this.error(new UnauthorizedException());
     }
-
-    return { ...tokenWithUser };
   }
-
-  //   private static extractJWT(req: RequestType): string | null {
-  //     if (req.body.refresh_token) {
-  //       return req.body.refresh_token;
-  //     }
-  //     return null;
-  //   }
 }

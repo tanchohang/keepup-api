@@ -23,7 +23,7 @@ import { WsJwtStrategy } from './passportStrategies/wsjwt.strategy';
     ]),
     ConfigModule,
     forwardRef(() => UsersModule),
-    PassportModule,
+    PassportModule.register({}),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
