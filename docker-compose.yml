@@ -13,9 +13,12 @@ services:
       - REFRESH_JWT_SECRET=2721fc5c639824baf8062bc412b81c1ce54a3da55a9c23d13df414865bc1f7d42becff2e55b74ba85be9d93acbb54a8530fb46fc214f54a17bf55d504f1d2483
 
       - NODE_ENV=production
-      # - BASE_URL=https://api.keepup.tanchohang.dev
+      - VITE_API_URL='/api'
       - BASE_URL=http://localhost
     user: "node:node"
+    volumes:
+      - /usr/app/node_modules
+      - .:/usr/app
 
   keepup-client:
     container_name: keepup-client
@@ -23,13 +26,13 @@ services:
     build: ../keepup-client/
     ports:
       - 4173:4173
-      - 5173:5173
       
     environment:
       - BASE_URL=https://keepup.tanchohang.dev
       - WDS_SOCKET_PATH=0
-    # volumes:
-      # - ../keepup-client:/usr/app
+    volumes:
+      - /usr/app/node_modules
+      - ../keepup-client:/usr/app
   nginx:
     depends_on:
       - keepup-client

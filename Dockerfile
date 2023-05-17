@@ -32,4 +32,4 @@ RUN yarn build
 USER node
 
 # Run npm start script with PM2 when container starts
-CMD [ "yarn", "start:prod" ]
+CMD [ "yarn", "start:dev" ]
