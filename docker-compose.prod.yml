@@ -31,6 +31,7 @@ services:
       - BASE_URL=https://keepup.tanchohang.dev
       - VITE_API_URL=/api
       - VITE_MODE=production
+      - NODE_ENV=production
     
   nginx-prod:
     depends_on:
