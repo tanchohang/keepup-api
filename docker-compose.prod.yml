@@ -34,8 +34,8 @@ services:
     
   nginx-prod:
     depends_on:
-      - keepup-client
-      - keepup-api
+      - keepup-client-prod
+      - keepup-api-prod
     container_name: nginx-prod
     restart: unless-stopped
     build: 
