@@ -107,11 +107,6 @@ export class MessageGateway implements OnGatewayInit {
     throw new BadRequestException();
   }
 
-  @SubscribeMessage('hangup')
-  async hangup(@MessageBody() pid: string, @ConnectedSocket() socket: Socket) {
-    socket.to(pid).emit('hungup', socket.data.user);
-  }
-
   @SubscribeMessage('setOfferCandidates')
   async setOfferCandidates(
     @MessageBody() body: { id: string; candidates: any },
@@ -146,6 +141,12 @@ export class MessageGateway implements OnGatewayInit {
     return peerConnection;
   }
 
+  @SubscribeMessage('hangup')
+  async hangup(@MessageBody() pid: string, @ConnectedSocket() socket: Socket) {
+    console.log(pid);
+    const peerConnection = await this.peerService.removePeer(pid);
+    socket.to(pid).emit('hungup', socket.data.user);
+  }
   @SubscribeMessage('removePeer')
   async removePeer(
     @MessageBody() body: { id: string },
