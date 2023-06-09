@@ -1,7 +1,8 @@
 version: '3.7'
 services:
-  keepup-api-prod:
-    container_name: api-prod
+  api:
+    image: api-prod-i
+    container_name: api-prod-c
     restart: unless-stopped
     build:
       context: .
@@ -16,32 +17,31 @@ services:
       - NODE_ENV=production
       - BASE_URL=http://localhost
     user: "node:node"
-   
 
-  keepup-client-prod:
-    container_name: client-prod
+  client_nginx:
+    image: client_nginx-prod-i
+    container_name: client_nginx-prod-c
     restart: unless-stopped
     build:
       context: ../keepup-client
       dockerfile: Dockerfile.prod
     ports:
-      - 4173:4173
-      
+      - 80:80
+      - 443:443
     environment:
-      - BASE_URL=https://keepup.tanchohang.dev
       - VITE_API_URL=/api
       - VITE_MODE=production
       - NODE_ENV=production
-    
-  nginx-prod:
-    depends_on:
-      - keepup-client-prod
-      - keepup-api-prod
-    container_name: nginx-prod
-    restart: unless-stopped
-    build: 
-     context: ./nginx
-     dockerfile: Dockerfile.prod
-    ports:
-      - 80:80
-      - 443:443
+  # nginx:
+  #   depends_on:
+  #     - client
+  #     - api
+  #   image: nginx-prod-i
+  #   container_name: nginx-prod-c
+  #   restart: unless-stopped
+  #   build:
+  #     context: ./nginx
+  #     dockerfile: Dockerfile.prod
+  #   ports:
+  #     - 80:80
+  #     - 443:443
